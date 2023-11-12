@@ -21,15 +21,17 @@ public class Peca {
     }
 
     public void mover(Tabuleiro tabuleiro, int direcao){
+        System.out.println(this.tipo + "- Linha: " + this.getLinha() + " Coluna: " + this.getColuna());
         while(estaLivre(tabuleiro, direcao)){
-            System.out.println("Movendo...");
+            System.out.println("Movendo para " + direcao );
             mudarPosicao(tabuleiro, direcao);
+            System.out.println("Linha: " + this.getLinha() + " Coluna: " + this.getColuna());
         }
+        tabuleiro.exibirTabuleiro();
     }
 
     public boolean estaLivre(Tabuleiro tabuleiro, int direcao){
         if(verificarLimites(direcao)){
-            System.out.println("passou dos limites");
             switch (direcao) {
                 case ESQUERDA -> {
                     Peca slotEsquerda = tabuleiro.getPecaAt(this.getLinha(), this.getColuna() - 1);
@@ -98,6 +100,32 @@ public class Peca {
             case BAIXO -> this.setLinha(this.getLinha() + 1);
         }
         tabuleiro.adicionarPeca(this, this.getTipo());
+    }
+
+    public boolean mover(Tabuleiro tabuleiro, int linhaOffset, int colunaOffset) {
+        int novaLinha = this.getLinha() + linhaOffset;
+        int novaColuna = this.getColuna() + colunaOffset;
+
+        if (movimentoValido(tabuleiro, novaLinha, novaColuna)) {
+            tabuleiro.removerPeca(this);
+            setLinha(novaLinha);
+            setColuna(novaColuna);
+            tabuleiro.adicionarPeca(this, this.getTipo());
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean movimentoValido(Tabuleiro tabuleiro, int novaLinha, int novaColuna) {
+        // Verifica se a nova posição está dentro dos limites do tabuleiro
+        if (novaLinha < 0 || novaLinha >= 5 || novaColuna < 0 || novaColuna >= 5) {
+            return false;
+        }
+
+        // Verifica se a nova posição está ocupada por outra peça
+        Peca pecaNaNovaPosicao = tabuleiro.getPecaAt(novaLinha, novaColuna);
+        return pecaNaNovaPosicao.getTipo() == SLOT_VAZIO;
     }
 
     //getters
