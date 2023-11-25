@@ -8,10 +8,16 @@ public class Peca {
     public static final int CIMA = 3;
     public static final int BAIXO = 4;
 
+    public static final int LIMITE_SUPERIOR = 0;
+    public static final int LIMITE_INFERIOR = 4;
+    public static final int LIMITE_ESQUERDA = 0;
+    public static final int LIMITE_DIREITA = 4;
+
 
     public static final int SLOT_VAZIO = 0;
-    public static final int PECA_JOGADOR1 = 1;
-    public static final int PECA_JOGADOR2 = 2;
+    public static final int JOGADOR1 = 1;
+    public static final int JOGADOR2 = 2;
+    public static final int TOK = 3;
 
 
     public Peca(int i, int j, int tipo) {
@@ -21,13 +27,9 @@ public class Peca {
     }
 
     public void mover(Tabuleiro tabuleiro, int direcao){
-        System.out.println(this.tipo + "- Linha: " + this.getLinha() + " Coluna: " + this.getColuna());
         while(estaLivre(tabuleiro, direcao)){
-            System.out.println("Movendo para " + direcao );
             mudarPosicao(tabuleiro, direcao);
-            System.out.println("Linha: " + this.getLinha() + " Coluna: " + this.getColuna());
         }
-        tabuleiro.exibirTabuleiro();
     }
 
     public boolean estaLivre(Tabuleiro tabuleiro, int direcao){
@@ -67,22 +69,22 @@ public class Peca {
     public boolean verificarLimites(int direcao){
         switch (direcao) {
             case ESQUERDA -> {
-                if(this.getColuna() - 1 < 0){
+                if(this.getColuna() - 1 < LIMITE_ESQUERDA){
                     return false;
                 }
             }
             case DIREITA -> {
-                if(this.getColuna() + 1 > 4){
+                if(this.getColuna() + 1 > LIMITE_DIREITA){
                     return false;
                 }
             }
             case CIMA -> {
-                if(this.getLinha() - 1 < 0){
+                if(this.getLinha() - 1 < LIMITE_SUPERIOR){
                     return false;
                 }
             }
             case BAIXO -> {
-                if(this.getLinha() + 1 > 4){
+                if(this.getLinha() + 1 > LIMITE_INFERIOR){
                     return false;
                 }
             }
@@ -100,32 +102,6 @@ public class Peca {
             case BAIXO -> this.setLinha(this.getLinha() + 1);
         }
         tabuleiro.adicionarPeca(this, this.getTipo());
-    }
-
-    public boolean mover(Tabuleiro tabuleiro, int linhaOffset, int colunaOffset) {
-        int novaLinha = this.getLinha() + linhaOffset;
-        int novaColuna = this.getColuna() + colunaOffset;
-
-        if (movimentoValido(tabuleiro, novaLinha, novaColuna)) {
-            tabuleiro.removerPeca(this);
-            setLinha(novaLinha);
-            setColuna(novaColuna);
-            tabuleiro.adicionarPeca(this, this.getTipo());
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean movimentoValido(Tabuleiro tabuleiro, int novaLinha, int novaColuna) {
-        // Verifica se a nova posição está dentro dos limites do tabuleiro
-        if (novaLinha < 0 || novaLinha >= 5 || novaColuna < 0 || novaColuna >= 5) {
-            return false;
-        }
-
-        // Verifica se a nova posição está ocupada por outra peça
-        Peca pecaNaNovaPosicao = tabuleiro.getPecaAt(novaLinha, novaColuna);
-        return pecaNaNovaPosicao.getTipo() == SLOT_VAZIO;
     }
 
     //getters
@@ -148,7 +124,10 @@ public class Peca {
         this.coluna = coluna;
     }
 
-    public void setTipo(int tipo) {
-        this.tipo = tipo;
+    //toString
+    @Override
+    public String toString() {
+        return linha + ", " + coluna;
     }
+
 }
