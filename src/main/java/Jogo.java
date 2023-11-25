@@ -3,8 +3,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class Jogo extends JFrame {
+public class JogoTela extends JFrame {
     private Tabuleiro tabuleiro;
+    private Rodada rodada;
+    private Tok tok;
+    private int[] resultado;
     private Peca pecaSelecionada;
     private JPanel painelPrincipal;
     private JButton[][] botoes;
@@ -15,7 +18,9 @@ public class Jogo extends JFrame {
     private JButton botaoBaixo;
     private JLabel erroLabel;
 
-    public Jogo() {
+    public JogoTela() {
+        rodada = new Rodada();
+
         configurarJanela();
 
         configurarBarraMenus();
@@ -96,9 +101,14 @@ public class Jogo extends JFrame {
     private void criarTabuleiro() {
         for (int i = 0; i < botoes.length; i++) {
             for (int j = 0; j < botoes[i].length; j++) {
+
                 botoes[i][j] = new JButton();
 
                 Peca peca = tabuleiro.getPecaAt(i, j);
+
+                if(peca.getTipo() == peca.PECA_TOK){
+                    tok = (Tok) peca;
+                }
 
                 if(peca.getTipo() == Peca.SLOT_VAZIO){
                     botoes[i][j].setText("");
@@ -199,6 +209,15 @@ public class Jogo extends JFrame {
     }
 
     private void atualizarTabuleiro(){
+
+        //VERIFICANDO SE É O INÍCIO DA RODADA
+        if(rodada.etapa % 1 == 0){
+            resultado = tok.verificarCondicaoDeVitoria(tabuleiro, rodada);
+            rodada.passarMetadeRodada();
+        } else {
+            resultado = tok.verificarCondicaoDeVitoria(tabuleiro, rodada);
+            rodada.passarRodada();
+        }
         for(int i = 0; i < botoes.length; i++){
             for(int j = 0; j < botoes[i].length; j++){
                 Peca peca = tabuleiro.getPecaAt(i, j);
@@ -222,6 +241,10 @@ public class Jogo extends JFrame {
                     }
                 });
             }
+        }
+
+        if(resultado[Tok.SITUACAO_VITORIA] == Tok.HOUVE_VITORIA){
+            System.out.println("Houve vitória");
         }
     }
 }
