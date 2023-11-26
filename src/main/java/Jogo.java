@@ -235,6 +235,14 @@ public class Jogo extends JFrame {
         botaoBaixo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                //tratar exceção de pecaSelecionada == null
+                try {
+                    pecaSelecionada.mover(tabuleiro, Peca.BAIXO);
+                    deselecionarTodasAsPecas();
+                    atualizarTabuleiro();
+                } catch (Exception exception) {
+                    erroLabel.setText("Selecione uma peça para movê-la");
+                }
                 pecaSelecionada.mover(tabuleiro, Peca.BAIXO);
                 deselecionarTodasAsPecas();
                 atualizarTabuleiro();
